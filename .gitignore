@@ -1,0 +1,36 @@
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+*.spec
+
+# virtualenv
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# secrets
+*.pem
+*.key
+.env
+
+# sensitive — encrypted resource files
+src/resources/extension1.pdf
+src/resources/extension2.pdf
+src/resources/libiMobileeDevice.dylib
+libiMobileeDevice.dylib

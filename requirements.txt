@@ -1,0 +1,31 @@
+# ErFlasher MDM Tools — Cross-Platform
+# github: https://github.com/Erzambayu/MDMPatcher-Enhanced
+# install: pip install -r requirements.txt
+
+# GUI framework (modern, native look, cross-platform)
+customtkinter>=5.2.0
+Pillow>=10.0.0
+
+# Crypto — RNCryptor v3 decryption
+pycryptodome>=3.19.0
+
+# USB device detection (optional, polling fallback built-in)
+pyusb>=1.2.1
+
+# Packaging (for building standalone .exe)
+pyinstaller>=6.0.0
+
+# ============================================
+# platform-specific external dependencies:
+# ============================================
+#
+# LINUX:
+#   sudo apt install libimobiledevice-utils usbmuxd
+#
+# WINDOWS:
+#   option a: install iTunes (provides Apple Mobile Device Support)
+#   option b: MSYS2 + pacman -S mingw-w64-libimobiledevice
+#   option c: download libimobiledevice-win32 pre-built binaries
+#
+# OPTIONAL (pure Python backup restore):
+#   pip install pymobiledevice3
