@@ -13,8 +13,10 @@ built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fle
 | **iOS 15.0 – 18.5+** | ✅ fully tested |
 | **iOS 16.x, 17.x** | ✅ works |
 | **iOS 18.0 – 18.5+** | ✅ latest confirmed working |
+| **iOS 26.0 – 26.2** | ✅ confirmed working by users (iPhone 15, various iPads) |
+| **iOS 26.3+** | ⚠️ mixed reports — some work, some error. try blocking Apple MDM hosts (see troubleshooting) |
 | **below iOS 15** | ⚠️ may work, not tested |
-| **above iOS 18.5** | ⚠️ not yet tested, but backup format rarely changes between minor versions |
+| **above iOS 26.5** | ⚠️ not yet tested — backup format rarely changes between minor versions
 
 **why does this work across versions?** — this tool doesn't use exploits or jailbreaks. it leverages the **MobileBackup2** protocol (iTunes backup/restore), a legitimate iOS feature present since iOS 4. Apple can't easily "patch" this without breaking their own restore functionality.
 
@@ -67,8 +69,10 @@ built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fle
 ┌──────────────────────────────────────────┐
 │  enter RECOVERY MODE                      │
 │                                           │
-│  iPhone with Face ID / iPhone 8+:         │
-│    hold Side Button while plugging USB    │
+│  iPhone 8 and later (Face ID):            │
+│    1. tap Volume Up                       │
+│    2. tap Volume Down                     │
+│    3. hold Side Button while plugging USB │
 │                                           │
 │  iPhone 7 / 7 Plus:                       │
 │    hold Volume Down while plugging USB    │
@@ -207,13 +211,78 @@ python main.py
 - try again
 ```
 
-### patch successful but MDM still appears
+### error saat klik "PATCH" / "There was an error while patching" 🔥
+
+ini issue paling umum. coba langkah-langkah ini (berdasarkan laporan user yg berhasil):
+
+#### a) blokir Apple MDM enrollment servers
+
+device iOS secara diam-diam ngecek MDM status ke server Apple bahkan tanpa Wi-Fi (via cached DNS atau koneksi background). blokir hostnames ini di komputer lo:
+
+**Windows** — edit `C:\Windows\System32\drivers\etc\hosts` (run Notepad as Administrator):
+```
+0.0.0.0    iprofiles.apple.com
+0.0.0.0    mdmenrollment.apple.com
+0.0.0.0    deviceenrollment.apple.com
+```
+
+**Linux** — edit `/etc/hosts` (pakai `sudo`):
+```bash
+sudo nano /etc/hosts
+# tambahin 3 baris yg sama di atas
+```
+
+> ⚠️ jangan lupa hapus entries ini setelah selesai biar iTunes/iCloud normal lagi
+
+#### b) power cycle device sebelum patch
 
 ```
-- device may have briefly connected to Wi-Fi before patching
-- repeat from step 1 (restore IPSW again)
-- make absolutely sure no Wi-Fi connection before patch
+1. pastikan device gak konek Wi-Fi (tetep di Wi-Fi screen, jangan pilih network)
+2. biarin iPad/iPhone tetep ke-plug USB
+3. biarin ErFlasher MDM Tools tetep kebuka
+4. restart device (power off → power on)
+5. setelah nyala lagi & balik ke Hello screen → langsung klik PATCH
 ```
+
+kenapa ini membantu: power cycle nge-reset koneksi network internal & cache. device jadi "fresh" tanpa sempet ngecek Apple server.
+
+#### c) pastikan aktivasi selesai
+
+```
+- buka iTunes/Finder, klik device lo
+- tunggu sampai muncul "Get Started" atau "Welcome to your new iPhone/iPad"
+- baru buka ErFlasher MDM Tools & klik PATCH
+```
+
+### patch sukses tapi MDM balik setelah factory reset
+
+ini **fundamental limitation**, bukan bug. penjelasannya:
+
+- tools ini nge-patch **backup lokal yg direstore ke device** — bukan deregister dari Apple server
+- kalo lo factory reset dari **Settings HP** (tanpa restore via komputer), device narik config langsung dari Apple Business Manager — dan serial number lo masih terdaftar di server mereka
+- **solusi:** kalo perlu reset lagi, harus restore IPSW via komputer + patch ulang. jangan reset dari Settings.
+
+### activation lock vs MDM — beda!
+
+banyak user bingung antara dua ini:
+
+| | MDM (Mobile Device Management) | Activation Lock (Find My) |
+|---|---|---|
+| **penyebab** | device terdaftar di Apple Business Manager / School Manager | iCloud / Find My iPhone masih nyala |
+| **yg muncul di layar** | "Remote Management" / "This device is managed by..." | "Activation Lock" / minta Apple ID & password |
+| **bisa dibypass tools ini?** | ✅ iya | ❌ tidak |
+| **yg dibutuhin** | restore IPSW + patch backup | Apple ID & password pemilik asli |
+
+**ErFlasher MDM Tools tidak bisa bypass Activation Lock / iCloud lock.**
+
+### patch berhasil, tapi setelah setup normal MDM notification muncul lagi
+
+ini bisa terjadi kalo device sempet konek internet **setelah** patch di tahap setup normal (setelah Hello screen selesai). devices yg registered di ABM akan ngecek ulang pas udah online.
+
+**mitigasi:**
+1. selama setup awal setelah patch, skip semua yg berhubungan sama internet semaksimal mungkin
+2. setelah masuk homescreen, langsung matiin Wi-Fi
+3. install MDM-blocking configuration profile (opsional, advanced users)
 
 ### app blocked on Windows (SmartScreen)
 
