@@ -2,7 +2,7 @@
 main.py - entry point for ErFlasher MDM Tools
 cross-platform (Windows & Linux)
 
-github: https://github.com/Erzambayu/MDMPatcher-Enhanced
+github: https://github.com/Erzambayu/ErFlasher-MDM-Tools
 credit: Erzambayu
 based on: MDMPatcher-Enhanced by fled-dev
 """

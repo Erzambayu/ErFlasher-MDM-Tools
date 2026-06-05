@@ -1,5 +1,5 @@
 # ErFlasher MDM Tools — Cross-Platform
-# github: https://github.com/Erzambayu/MDMPatcher-Enhanced
+# github: https://github.com/Erzambayu/ErFlasher-MDM-Tools
 # install: pip install -r requirements.txt
 
 # GUI framework (modern, native look, cross-platform)

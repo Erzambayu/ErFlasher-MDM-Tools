@@ -28,7 +28,7 @@ built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fle
 
 ## 🔗 links
 
-- **GitHub**: [github.com/Erzambayu/MDMPatcher-Enhanced](https://github.com/Erzambayu/MDMPatcher-Enhanced)
+- **GitHub**: [github.com/Erzambayu/ErFlasher-MDM-Tools](https://github.com/Erzambayu/ErFlasher-MDM-Tools)
 - **Original**: [github.com/fled-dev/MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced)
 
 ---
@@ -299,4 +299,4 @@ ErFlasher-MDM-Tools/
 
 ## 📝 license
 
-MIT — [github.com/Erzambayu/MDMPatcher-Enhanced](https://github.com/Erzambayu/MDMPatcher-Enhanced)
+MIT — [github.com/Erzambayu/ErFlasher-MDM-Tools](https://github.com/Erzambayu/ErFlasher-MDM-Tools)

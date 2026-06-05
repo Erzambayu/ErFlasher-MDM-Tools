@@ -2,7 +2,7 @@
 main_window.py - CustomTkinter GUI for ErFlasher MDM Tools
 dark theme, modern, clean. ported from macOS Cocoa storyboard layout.
 
-github: https://github.com/Erzambayu/MDMPatcher-Enhanced
+github: https://github.com/Erzambayu/ErFlasher-MDM-Tools
 credit: Erzambayu
 """
 
@@ -226,7 +226,7 @@ class ErFlasherApp(ctk.CTk):
         footer.grid(row=5, column=0, sticky="ew", padx=24, pady=(16, 24))
         
         version_label = ctk.CTkLabel(
-            footer, text="v2.0.0 • cross-platform • github.com/Erzambayu/MDMPatcher-Enhanced",
+            footer, text="v2.0.0 • cross-platform • github.com/Erzambayu/ErFlasher-MDM-Tools",
             font=FONTS["version"], text_color=COLORS["text_secondary"]
         )
         version_label.pack()

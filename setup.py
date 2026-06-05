@@ -14,7 +14,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Erzambayu",
-    url="https://github.com/Erzambayu/MDMPatcher-Enhanced",
+    url="https://github.com/Erzambayu/ErFlasher-MDM-Tools",
     
     packages=find_packages(),
     package_data={
