@@ -38,6 +38,7 @@ def build():
     is_windows = sys.platform == "win32"
     separator = ";" if is_windows else ":"
     ext = ".exe" if is_windows else ""
+    window_mode = "--windowed" if is_windows else "--console"
     
     # resource files to bundle
     resource_files = []
@@ -56,18 +57,14 @@ def build():
         sys.executable, "-m", "PyInstaller",
         "--name", "ErFlasher-MDM-Tools",
         "--onefile",            # single .exe
-        "--windowed",           # no console window (Windows)
+        window_mode,            # --windowed on Windows, --console on Linux
         "--clean",
         "--noconfirm",
         *add_data_arg,
         str(PROJECT_ROOT / "main.py"),
     ]
     
-    # on linux, also add icon if available
-    if not is_windows:
-        # prevent GUI warnings about missing display
-        cmd.insert(2, "--console")  # linux: keep console for debugging
-        pass
+    # remove dead code — window_mode already handles platform
     
     print(f"[build] running: {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=str(PROJECT_ROOT))

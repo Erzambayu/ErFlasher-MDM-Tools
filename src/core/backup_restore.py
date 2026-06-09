@@ -10,8 +10,11 @@ import sys
 import subprocess
 import shutil
 import time
+import logging
 from pathlib import Path
 from typing import Optional, Tuple
+
+logger = logging.getLogger("erflasher.restore")
 
 
 # ---------------------------------------------------------------------------
@@ -80,6 +83,7 @@ def prepare_backup_for_restore(temp_dir: str, device_udid: str) -> str:
     # rename MDMB -> UDID
     os.rename(mdmb_path, udid_path)
     print(f"[restore] renamed MDMB -> {device_udid}")
+    logger.info(f"renamed MDMB -> {device_udid}")
     
     # verify Info.plist exists
     info_plist = os.path.join(udid_path, "Info.plist")
@@ -117,12 +121,15 @@ def restore_backup(
                       "  Windows: install via MSYS2 or download libimobiledevice-win32"
     
     # build command
+    # idevicebackup2 restore flags:
+    #   --system   = restore system files
+    #   --settings = restore settings (MDM config lives here)
+    #   -u <udid>  = target device
     cmd = [
         binary,
         "restore",
         "--system",        # restore system files
         "--settings",      # restore settings (MDM config lives here)
-        "--skip-apps",     # skip app restore (we don't have app data)
         backup_dir
     ]
     
@@ -130,6 +137,7 @@ def restore_backup(
         cmd.extend(["--udid", device_udid])
     
     print(f"[restore] running: {' '.join(cmd)}")
+    logger.info(f"running: {' '.join(cmd)}")
     
     try:
         # run with real-time output
@@ -148,6 +156,7 @@ def restore_backup(
             line = line.rstrip()
             output_lines.append(line)
             print(f"[restore] {line}")
+            logger.debug(f"idevicebackup2: {line}")
             
             if progress_callback:
                 progress_callback(line)
@@ -157,9 +166,11 @@ def restore_backup(
         success = process.returncode == 0
         
         if success:
+            logger.info("restore completed successfully")
             return True, "MDM patched successfully! device will reboot."
         else:
             error_msg = f"Restore failed with exit code {process.returncode}"
+            logger.error(f"restore failed: exit code {process.returncode}")
             # extract error dari output
             for line in output_lines:
                 if "ERROR" in line or "error" in line.lower():
@@ -168,6 +179,7 @@ def restore_backup(
     
     except subprocess.TimeoutExpired:
         process.kill()
+        process.wait(timeout=5)  # reap zombie process
         return False, "Restore timed out (5 minutes). device may be unresponsive."
     except FileNotFoundError:
         return False, f"idevicebackup2 binary not found at: {binary}"
@@ -251,10 +263,12 @@ def execute_full_restore(
     
     # try CLI first (more reliable)
     if is_idevicebackup2_available():
+        logger.info("using idevicebackup2 CLI")
         print("[restore] using idevicebackup2 CLI")
         return restore_backup(temp_dir, device_udid, progress_callback)
     
     # fallback to pymobiledevice3
+    logger.info("trying pymobiledevice3 fallback...")
     print("[restore] trying pymobiledevice3...")
     success, msg = restore_backup_pymd3(temp_dir, device_udid, progress_callback)
     if success:

@@ -127,21 +127,24 @@ def rncryptor_decrypt(data: bytes, password: str) -> bytes:
     computed_hmac = CryptoHMAC.new(hmac_key, hmac_data, SHA256).digest()
     
     if not hmac_module.compare_digest(computed_hmac, expected_hmac):
-        # for debugging: sometimes RNCryptor uses different HMAC scope
-        # try without options byte (some versions)
-        hmac_data_v2 = data[:1] + data[2:HEADER_SIZE + len(ciphertext)]
-        computed_hmac_v2 = CryptoHMAC.new(hmac_key, hmac_data_v2, SHA256).digest()
-        if not hmac_module.compare_digest(computed_hmac_v2, expected_hmac):
-            raise ValueError("HMAC verification failed — wrong password or corrupted data")
+        raise ValueError("HMAC verification failed — wrong password or corrupted data")
     
     # decrypt AES-256-CBC
     cipher = AES.new(encryption_key, AES.MODE_CBC, iv=iv)
     plaintext = cipher.decrypt(ciphertext)
     
-    # remove PKCS#7 padding
+    # remove PKCS#7 padding with full validation
+    if len(plaintext) == 0:
+        raise ValueError("decrypted data is empty")
+    
     pad_len = plaintext[-1]
     if pad_len < 1 or pad_len > 16:
-        raise ValueError(f"invalid PKCS#7 padding: {pad_len}")
+        raise ValueError(f"invalid PKCS#7 padding byte: {pad_len}")
+    
+    # verify ALL padding bytes are consistent
+    padding = plaintext[-pad_len:]
+    if not all(b == pad_len for b in padding):
+        raise ValueError(f"corrupted PKCS#7 padding: expected {pad_len} bytes of value {pad_len}")
     
     return plaintext[:-pad_len]
 

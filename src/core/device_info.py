@@ -122,9 +122,9 @@ def _get_device_info_ideviceinfo() -> dict | None:
         xml_data = result.stdout.encode("utf-8")
         try:
             plist_data = plistlib.loads(xml_data)
-        except Exception:
-            # some versions output binary plist despite -x flag
-            plist_data = plistlib.loads(xml_data, fmt=plistlib.FMT_XML)
+        except Exception as e:
+            print(f"[ideviceinfo] plist parse error: {e}")
+            return None
         
         return plist_data
         

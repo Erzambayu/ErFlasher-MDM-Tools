@@ -13,6 +13,7 @@ import io
 import tempfile
 import zipfile
 import shutil
+import logging
 from pathlib import Path
 from typing import Tuple, Optional
 
@@ -23,6 +24,8 @@ from .crypto_utils import (
     calculate_password,
 )
 from .device_info import DeviceInfo
+
+logger = logging.getLogger("erflasher.patcher")
 
 
 # resource filenames (identik dengan Swift bundle resources)
@@ -73,6 +76,7 @@ def decrypt_and_extract_backup(output_dir: str) -> str:
     returns: path ke subdirectory MDMB/ di dalam output_dir
     """
     print("[patcher] decrypting backup archive...")
+    logger.info("decrypting backup archive...")
     
     # baca + decrypt
     encrypted = _read_resource_bytes(RESOURCE_DYLIB)
@@ -80,10 +84,15 @@ def decrypt_and_extract_backup(output_dir: str) -> str:
     
     # extract ZIP dari memory
     print(f"[patcher] extracting backup archive ({len(decrypted)} bytes)...")
+    logger.info(f"extracting backup archive ({len(decrypted)} bytes)")
     zip_buffer = io.BytesIO(decrypted)
     
     with zipfile.ZipFile(zip_buffer, "r") as zf:
-        zf.extractall(output_dir)
+        # filter out __MACOSX/ artifacts (macOS resource fork junk)
+        for member in zf.namelist():
+            if member.startswith("__MACOSX/") or member.startswith("._"):
+                continue
+            zf.extract(member, output_dir)
     
     # verify MDMB/ directory exists
     mdmb_path = os.path.join(output_dir, BACKUP_SUBDIR)
@@ -93,6 +102,7 @@ def decrypt_and_extract_backup(output_dir: str) -> str:
         )
     
     print(f"[patcher] backup extracted to: {mdmb_path}")
+    logger.info(f"backup extracted to: {mdmb_path}")
     return mdmb_path
 
 
@@ -108,6 +118,7 @@ def decrypt_and_patch_plist(
     returns: content string dari plist yang udah di-patch.
     """
     print(f"[patcher] patching {resource_name} -> {output_path}")
+    logger.info(f"patching {resource_name} -> {output_path}")
     
     # baca + decrypt
     encrypted = _read_resource_bytes(resource_name)

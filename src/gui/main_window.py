@@ -9,12 +9,15 @@ credit: Erzambayu
 import customtkinter as ctk
 import threading
 import time
+import logging
 from typing import Optional
 
 from ..core.device_info import DeviceInfo, get_device_info
 from ..core.usb_detector import USBDetector
 from ..core.plist_patcher import BackupPatcher
 from ..core.backup_restore import execute_full_restore
+
+logger = logging.getLogger("erflasher.gui")
 
 
 # ---------------------------------------------------------------------------
@@ -251,14 +254,25 @@ class ErFlasherApp(ctk.CTk):
             self._on_device_connected(info)
     
     def _on_device_connected(self, device: DeviceInfo):
-        """callback when iOS device is connected."""
+        """callback when iOS device is connected (called from bg thread)."""
+        # schedule everything on main thread to avoid race conditions
+        self.after(0, self._handle_device_connect, device)
+    
+    def _handle_device_connect(self, device: DeviceInfo):
+        """handle device connection on main thread."""
         self._device = device
-        self.after(0, self._update_device_ui, device)
+        logger.info(f"device connected: {device.product_type} SN={device.serial_number} UDID={device.udid}")
+        self._update_device_ui(device)
     
     def _on_device_disconnected(self):
-        """callback when iOS device is disconnected."""
+        """callback when iOS device is disconnected (called from bg thread)."""
+        self.after(0, self._handle_device_disconnect)
+    
+    def _handle_device_disconnect(self):
+        """handle device disconnection on main thread."""
+        logger.info("device disconnected")
         self._device = None
-        self.after(0, self._clear_device_ui)
+        self._clear_device_ui()
     
     # ------------------------------------------------------------------
     # UI updates (must run on main thread via after())
@@ -387,6 +401,7 @@ class ErFlasherApp(ctk.CTk):
         
         try:
             # ---- step 1: decrypt & prepare backup ----
+            logger.info(f"patch started for device: {device.udid}")
             self.after(0, self._set_progress, "Decrypting backup archive...", 0.1)
             
             temp_dir, mdmb_path = patcher.prepare()
@@ -403,14 +418,17 @@ class ErFlasherApp(ctk.CTk):
             
             # ---- step 3: show result ----
             if success:
+                logger.info(f"patch success: {message}")
                 self.after(0, self._set_progress, "Done! Device will reboot.", 1.0)
                 time.sleep(1)
                 self.after(0, self._show_dialog, "Success", message, False)
             else:
+                logger.error(f"patch failed: {message}")
                 self.after(0, self._set_progress, "Failed.", 0.0)
                 self.after(0, self._show_dialog, "Error", message, True)
         
         except Exception as e:
+            logger.error(f"patch exception: {e}", exc_info=True)
             self.after(0, self._set_progress, f"Error: {e}", 0.0)
             self.after(0, self._show_dialog, "Error", str(e), True)
         
@@ -419,7 +437,7 @@ class ErFlasherApp(ctk.CTk):
             if temp_dir and patcher:
                 try:
                     patcher.cleanup()
-                except:
+                except Exception:
                     pass
             
             # reset UI
@@ -433,10 +451,10 @@ class ErFlasherApp(ctk.CTk):
             text="🔧 PATCH MDM"
         )
         
-        # refresh device info
-        if self._device and self._device.is_valid:
-            # re-fetch device info (UDID might have changed after reboot)
+        # refresh device info in background (don't block main thread)
+        def _refresh():
             fresh = get_device_info()
             if fresh.is_valid:
-                self._device = fresh
-                self._update_device_ui(fresh)
+                self.after(0, self._handle_device_connect, fresh)
+        
+        threading.Thread(target=_refresh, daemon=True).start()
