@@ -4,6 +4,9 @@
 
 Built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced) by fled-dev.
 
+[![release](https://img.shields.io/github/v/release/Erzambayu/ErFlasher-MDM-Tools?label=release)](https://github.com/Erzambayu/ErFlasher-MDM-Tools/releases)
+[![downloads](https://img.shields.io/github/downloads/Erzambayu/ErFlasher-MDM-Tools/total?label=downloads)](https://github.com/Erzambayu/ErFlasher-MDM-Tools/releases)
+
 ---
 
 ## 📱 iOS Version Support
