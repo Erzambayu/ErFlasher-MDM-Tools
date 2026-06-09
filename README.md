@@ -1,223 +1,228 @@
 # ErFlasher MDM Tools — Cross-Platform Edition
 
-**bypass MDM enrollment on iOS devices** — now on **Windows & Linux**.
+**Bypass MDM enrollment on iOS devices** — now on **Windows & Linux**.
 
-built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced) by fled-dev.
+Built by **Erzambayu** — based on [MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced) by fled-dev.
 
 ---
 
-## 📱 iOS version support
+## 📱 iOS Version Support
 
-| supported | details |
+| Supported | Details |
 |---|---|
-| **iOS 15.0 – 18.5+** | ✅ fully tested |
-| **iOS 16.x, 17.x** | ✅ works |
-| **iOS 18.0 – 18.5+** | ✅ latest confirmed working |
-| **iOS 26.0 – 26.2** | ✅ confirmed working by users (iPhone 15, various iPads) |
-| **iOS 26.3+** | ⚠️ mixed reports — some work, some error. try blocking Apple MDM hosts (see troubleshooting) |
-| **below iOS 15** | ⚠️ may work, not tested |
-| **above iOS 26.5** | ⚠️ not yet tested — backup format rarely changes between minor versions
+| **iOS 15.0 – 18.5+** | ✅ Fully tested |
+| **iOS 16.x, 17.x** | ✅ Works |
+| **iOS 18.0 – 18.5+** | ✅ Latest confirmed working |
+| **iOS 26.0 – 26.2** | ✅ Confirmed working by users (iPhone 15, various iPads) |
+| **iOS 26.3+** | ⚠️ Mixed reports — some work, some error. Try blocking Apple MDM hosts (see troubleshooting) |
+| **Below iOS 15** | ⚠️ May work, not tested |
+| **Above iOS 26.5** | ⚠️ Not yet tested — backup format rarely changes between minor versions |
 
-**why does this work across versions?** — this tool doesn't use exploits or jailbreaks. it leverages the **MobileBackup2** protocol (iTunes backup/restore), a legitimate iOS feature present since iOS 4. Apple can't easily "patch" this without breaking their own restore functionality.
+**Why does this work across versions?**
+This tool does not use exploits or jailbreaks. It leverages the **MobileBackup2** protocol (iTunes backup/restore), a legitimate iOS feature present since iOS 4. Apple cannot easily patch this without breaking their own restore flow.
 
-### devices supported
+### Devices Supported
 
 - **iPhone 5s** to **iPhone 16** (all models)
-- **all iPads** (including Pro, Air, Mini)
-- cellular & Wi-Fi only
+- **All iPads** (including Pro, Air, Mini)
+- Cellular & Wi-Fi only models
 
 ---
 
-## 🔗 links
+## 🔗 Links
 
 - **GitHub**: [github.com/Erzambayu/ErFlasher-MDM-Tools](https://github.com/Erzambayu/ErFlasher-MDM-Tools)
 - **Original**: [github.com/fled-dev/MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced)
 
 ---
 
-## 📋 requirements before starting
+## 📋 Requirements Before Starting
 
-### hardware
+### Hardware
+
 - USB Lightning / USB-C cable (original recommended)
 - Windows or Linux computer
 
-### device state (MANDATORY!)
+### Device State (Mandatory)
+
 ```
 ┌─────────────────────────────────────────────────────┐
-│  1. device at Hello screen (setup assistant)        │
-│  2. DO NOT connect to Wi-Fi or cellular data        │
-│  3. screen unlocked, display on                     │
-│  4. trust this computer? → tap "Trust"              │
+│  1. Device at Hello screen (Setup Assistant)        │
+│  2. Do NOT connect to Wi-Fi or cellular data        │
+│  3. Screen unlocked, display on                     │
+│  4. Trust this computer? → tap "Trust"             │
 └─────────────────────────────────────────────────────┘
 ```
 
-⚠️ **why no internet before patching?** if the device connects to Wi-Fi, it auto-checks Apple Business Manager / MDM enrollment server. once detected, the device locks before patching can complete.
+⚠️ **Why no internet before patching?**
+If the device connects to Wi-Fi, it can auto-check Apple Business Manager / MDM enrollment servers. Once detected, the device may lock before patching completes.
 
-### required file
+### Required File
+
 - **IPSW file** for your device — download from [ipsw.me](https://ipsw.me)
-  - check model number on device back (e.g. A1567)
-  - match to device name via [The iPhone Wiki](https://www.theiphonewiki.com/wiki/Models)
-  - **cellular vs Wi-Fi**: SIM slot → download Cellular IPSW, otherwise → Wi-Fi only
+  - Check model number on device back (e.g. A1567)
+  - Match device name via [The iPhone Wiki](https://www.theiphonewiki.com/wiki/Models)
+  - **Cellular vs Wi-Fi**: if device has SIM slot, download Cellular IPSW; otherwise use Wi-Fi only version
 
 ---
 
-## 🚀 full guide (step by step)
+## 🚀 Full Guide (Step by Step)
 
-### step 1: restore device with IPSW (clean wipe)
+### Step 1: Restore Device with IPSW (Clean Wipe)
 
 ```
 ┌──────────────────────────────────────────┐
-│  enter RECOVERY MODE                      │
-│                                           │
-│  iPhone 8 and later (Face ID):            │
-│    1. tap Volume Up                       │
-│    2. tap Volume Down                     │
-│    3. hold Side Button while plugging USB │
-│                                           │
-│  iPhone 7 / 7 Plus:                       │
-│    hold Volume Down while plugging USB    │
-│                                           │
-│  iPhone 6s and earlier:                   │
-│    hold Home Button while plugging USB    │
-│                                           │
-│  iPad without Home button:                │
-│    hold Top Button while plugging USB     │
-│                                           │
-│  iPad with Home button:                   │
-│    hold Home Button while plugging USB    │
+│  Enter RECOVERY MODE                     │
+│                                          │
+│  iPhone 8 and later (Face ID):           │
+│    1. tap Volume Up                      │
+│    2. tap Volume Down                    │
+│    3. hold Side Button while plugging USB│
+│                                          │
+│  iPhone 7 / 7 Plus:                      │
+│    hold Volume Down while plugging USB   │
+│                                          │
+│  iPhone 6s and earlier:                  │
+│    hold Home Button while plugging USB   │
+│                                          │
+│  iPad without Home button:               │
+│    hold Top Button while plugging USB    │
+│                                          │
+│  iPad with Home button:                  │
+│    hold Home Button while plugging USB   │
 └──────────────────────────────────────────┘
 ```
 
-- after entering recovery mode, Finder/iTunes shows "Update or Restore" popup
-- **Windows**: hold **SHIFT** + click "Restore"
+- After entering recovery mode, Finder/iTunes shows the **Update or Restore** popup
+- **Windows**: hold **SHIFT** + click **Restore**
 - **Linux**: use `idevicerestore` CLI:
   ```bash
   idevicerestore -e <path-to-ipsw.ipsw>
   ```
-- select the IPSW file you downloaded
-- wait for restore to finish (5–15 minutes)
+- Select IPSW file you downloaded
+- Wait for restore to finish (5–15 minutes)
 
-### step 2: initial setup until Wi-Fi screen
+### Step 2: Initial Setup Until Wi-Fi Screen
 
-- after restore, device reboots to Hello screen
-- follow initial setup:
-  - choose language
-  - choose region
-  - **when you reach "Choose a Wi-Fi Network" → STOP! DO NOT select ANY network!**
-  - do not connect Wi-Fi, do not connect cellular
-- leave device on that Wi-Fi screen
+- After restore, device reboots to Hello screen
+- Follow initial setup:
+  - Choose language
+  - Choose region
+  - **When you reach "Choose a Wi-Fi Network" → STOP. Do NOT select any network.**
+  - Do not connect Wi-Fi, do not connect cellular
+- Leave device on that Wi-Fi screen
 
-### step 3: install dependencies
+### Step 3: Install Dependencies
 
 **Linux:**
 ```bash
-# python dependencies
+# Python dependencies
 pip install -r requirements.txt
 
-# system tools (libimobiledevice)
+# System tools (libimobiledevice)
 sudo apt update
 sudo apt install libimobiledevice-utils usbmuxd
 
-# start usbmuxd service
+# Start usbmuxd service
 sudo systemctl start usbmuxd
 ```
 
 **Windows:**
 ```bash
-# python dependencies
+# Python dependencies
 pip install -r requirements.txt
 
-# install iTunes (provides Apple Mobile Device Support + usbmuxd)
-# download from: https://www.apple.com/itunes/
+# Install iTunes (provides Apple Mobile Device Support + usbmuxd)
+# Download from: https://www.apple.com/itunes/
 #
 # OR install via MSYS2:
 # pacman -S mingw-w64-x86_64-libimobiledevice
 ```
 
-### step 4: connect device & trust
+### Step 4: Connect Device & Trust
 
-- connect device to computer via USB cable
-- **unlock device** (screen must be on, not at lock screen)
-- "Trust This Computer?" popup → tap **"Trust"**
-- if asked for passcode, enter old passcode
+- Connect device to computer via USB cable
+- **Unlock device** (screen must be on, not at lock screen)
+- "Trust This Computer?" popup → tap **Trust**
+- If asked for passcode, enter old passcode
 
-### step 5: verify device detected
+### Step 5: Verify Device Detected
 
 ```bash
-# check device detected
+# Check device detected
 idevice_id -l
 # output: 00008030-001854E42E06402E  (example UDID)
 
-# check device info
+# Check device info
 ideviceinfo -s
 # should show ProductType, SerialNumber, BuildVersion, etc.
 ```
 
-if `ideviceinfo` fails → make sure device is unlocked + trusted.
+If `ideviceinfo` fails, make sure device is unlocked and trusted.
 
-### step 6: open ErFlasher MDM Tools & patch
+### Step 6: Open ErFlasher MDM Tools & Patch
 
 ```bash
 python main.py
 ```
 
-1. app auto-detects device
-2. device info (model, SN, UDID, firmware, IMEI) shows in UI
-3. click **"🔧 PATCH MDM"** button
-4. watch progress:
+1. App auto-detects device
+2. Device info (model, SN, UDID, firmware, IMEI) shows in UI
+3. Click **"🔧 PATCH MDM"** button
+4. Watch progress:
    - decrypting backup archive...
    - patching plist files...
    - restoring to device...
-5. device will **reboot automatically**
-6. after reboot → device returns to Hello screen → **now you CAN connect Wi-Fi** — MDM is gone!
+5. Device will **reboot automatically**
+6. After reboot, device returns to Hello screen → **now you CAN connect Wi-Fi** — MDM is gone!
 
-### step 7: finish setup
+### Step 7: Finish Setup
 
-- continue iOS setup normally
-- connect Wi-Fi → activation → iCloud → done
-- device is now **MDM-free**
+- Continue iOS setup normally
+- Connect Wi-Fi → activation → iCloud → done
+- Device is now **MDM-free**
 
 ---
 
-## 🐛 troubleshooting
+## 🐛 Troubleshooting
 
-### "No device found" / device not detected
+### "No device found" / Device not detected
 
 ```
-1. check USB cable (use original if possible)
-2. unlock device, screen on
-3. make sure you tapped "Trust"
-4. unplug → replug USB
-5. check usbmuxd service running:
+1. Check USB cable (use original if possible)
+2. Unlock device, screen on
+3. Make sure you tapped "Trust"
+4. Unplug → replug USB
+5. Check usbmuxd service running:
    Linux: sudo systemctl status usbmuxd
    Windows: check iTunes / Apple Mobile Device Service in Services
 ```
 
-### "ERROR: Could not connect to lockdownd"
+### "ERROR: Could Not Connect to Lockdownd"
 
 ```
-- device must be at Hello screen (normal mode), NOT recovery mode
-- make sure screen is unlocked
-- try unlocking device, closing/opening app
-- restart usbmuxd: sudo systemctl restart usbmuxd (Linux)
+- Device must be at Hello screen (normal mode), NOT recovery mode
+- Make sure screen is unlocked
+- Try unlocking device, closing/opening app
+- Restart usbmuxd: sudo systemctl restart usbmuxd (Linux)
 ```
 
-### "ERROR: Restore failed"
+### "ERROR: Restore Failed"
 
 ```
-- device may not be fully activated yet
-- open Finder/iTunes, click device, wait for "Get Started" to appear
-- unplug → replug USB
-- try again
+- Device may not be fully activated yet
+- Open Finder/iTunes, click device, wait for "Get Started" to appear
+- Unplug → replug USB
+- Try again
 ```
 
-### error saat klik "PATCH" / "There was an error while patching" 🔥
+### Error saat klik "PATCH" / "There was an error while patching" 🔥
 
-ini issue paling umum. coba langkah-langkah ini (berdasarkan laporan user yg berhasil):
+Ini issue paling umum. Coba langkah-langkah ini (berdasarkan laporan user yang berhasil):
 
-#### a) blokir Apple MDM enrollment servers
+#### a) Block Apple MDM enrollment servers
 
-device iOS secara diam-diam ngecek MDM status ke server Apple bahkan tanpa Wi-Fi (via cached DNS atau koneksi background). blokir hostnames ini di komputer lo:
+Device iOS bisa ngecek MDM status ke server Apple bahkan tanpa Wi-Fi (via cached DNS atau koneksi background). Block hostnames ini di komputer lo:
 
 **Windows** — edit `C:\Windows\System32\drivers\etc\hosts` (run Notepad as Administrator):
 ```
@@ -229,107 +234,107 @@ device iOS secara diam-diam ngecek MDM status ke server Apple bahkan tanpa Wi-Fi
 **Linux** — edit `/etc/hosts` (pakai `sudo`):
 ```bash
 sudo nano /etc/hosts
-# tambahin 3 baris yg sama di atas
+# tambahin 3 baris yang sama di atas
 ```
 
-> ⚠️ jangan lupa hapus entries ini setelah selesai biar iTunes/iCloud normal lagi
+> ⚠️ Jangan lupa hapus entries ini setelah selesai biar iTunes/iCloud normal lagi.
 
-#### b) power cycle device sebelum patch
-
-```
-1. pastikan device gak konek Wi-Fi (tetep di Wi-Fi screen, jangan pilih network)
-2. biarin iPad/iPhone tetep ke-plug USB
-3. biarin ErFlasher MDM Tools tetep kebuka
-4. restart device (power off → power on)
-5. setelah nyala lagi & balik ke Hello screen → langsung klik PATCH
-```
-
-kenapa ini membantu: power cycle nge-reset koneksi network internal & cache. device jadi "fresh" tanpa sempet ngecek Apple server.
-
-#### c) pastikan aktivasi selesai
+#### b) Power cycle device sebelum patch
 
 ```
-- buka iTunes/Finder, klik device lo
-- tunggu sampai muncul "Get Started" atau "Welcome to your new iPhone/iPad"
-- baru buka ErFlasher MDM Tools & klik PATCH
+1. Pastikan device gak konek Wi-Fi (tetap di Wi-Fi screen, jangan pilih network)
+2. Biarin iPad/iPhone tetap ke-plug USB
+3. Biarin ErFlasher MDM Tools tetap kebuka
+4. Restart device (power off → power on)
+5. Setelah nyala lagi & balik ke Hello screen → langsung klik PATCH
 ```
 
-### patch sukses tapi MDM balik setelah factory reset
+Kenapa ini membantu: power cycle nge-reset koneksi network internal & cache. Device jadi "fresh" tanpa sempat ngecek Apple server.
 
-ini **fundamental limitation**, bukan bug. penjelasannya:
+#### c) Pastikan aktivasi selesai
 
-- tools ini nge-patch **backup lokal yg direstore ke device** — bukan deregister dari Apple server
-- kalo lo factory reset dari **Settings HP** (tanpa restore via komputer), device narik config langsung dari Apple Business Manager — dan serial number lo masih terdaftar di server mereka
-- **solusi:** kalo perlu reset lagi, harus restore IPSW via komputer + patch ulang. jangan reset dari Settings.
+```
+- Buka iTunes/Finder, klik device lo
+- Tunggu sampai muncul "Get Started" atau "Welcome to your new iPhone/iPad"
+- Baru buka ErFlasher MDM Tools & klik PATCH
+```
 
-### activation lock vs MDM — beda!
+### Patch sukses tapi MDM balik setelah factory reset
 
-banyak user bingung antara dua ini:
+Ini **fundamental limitation**, bukan bug. Penjelasannya:
+
+- Tools ini nge-patch **backup lokal yang direstore ke device** — bukan deregister dari Apple server
+- Kalau lo factory reset dari **Settings HP** (tanpa restore via komputer), device narik config langsung dari Apple Business Manager — dan serial number lo masih terdaftar di server mereka
+- **Solusi:** kalau perlu reset lagi, harus restore IPSW via komputer + patch ulang. Jangan reset dari Settings.
+
+### Activation Lock vs MDM — beda!
+
+Banyak user bingung antara dua ini:
 
 | | MDM (Mobile Device Management) | Activation Lock (Find My) |
 |---|---|---|
-| **penyebab** | device terdaftar di Apple Business Manager / School Manager | iCloud / Find My iPhone masih nyala |
-| **yg muncul di layar** | "Remote Management" / "This device is managed by..." | "Activation Lock" / minta Apple ID & password |
-| **bisa dibypass tools ini?** | ✅ iya | ❌ tidak |
-| **yg dibutuhin** | restore IPSW + patch backup | Apple ID & password pemilik asli |
+| **Penyebab** | Device terdaftar di Apple Business Manager / School Manager | iCloud / Find My iPhone masih nyala |
+| **Yang muncul di layar** | "Remote Management" / "This device is managed by..." | "Activation Lock" / minta Apple ID & password |
+| **Bisa dibypass tools ini?** | ✅ iya | ❌ tidak |
+| **Yang dibutuhkan** | Restore IPSW + patch backup | Apple ID & password pemilik asli |
 
 **ErFlasher MDM Tools tidak bisa bypass Activation Lock / iCloud lock.**
 
-### patch berhasil, tapi setelah setup normal MDM notification muncul lagi
+### Patch berhasil, tapi setelah setup normal MDM notification muncul lagi
 
-ini bisa terjadi kalo device sempet konek internet **setelah** patch di tahap setup normal (setelah Hello screen selesai). devices yg registered di ABM akan ngecek ulang pas udah online.
+Ini bisa terjadi kalau device sempat konek internet **setelah** patch di tahap setup normal (setelah Hello screen selesai). Device yang terdaftar di ABM akan ngecek ulang saat sudah online.
 
-**mitigasi:**
-1. selama setup awal setelah patch, skip semua yg berhubungan sama internet semaksimal mungkin
-2. setelah masuk homescreen, langsung matiin Wi-Fi
-3. install MDM-blocking configuration profile (opsional, advanced users)
+**Mitigasi:**
+1. Selama setup awal setelah patch, skip semua yang berhubungan sama internet semaksimal mungkin
+2. Setelah masuk homescreen, langsung matikan Wi-Fi
+3. Install MDM-blocking configuration profile (opsional, advanced users)
 
-### app blocked on Windows (SmartScreen)
+### App blocked on Windows (SmartScreen)
 
 ```
-- click "More info" → "Run anyway"
-- or add project folder to Windows Defender exceptions
+- Click "More info" → "Run anyway"
+- Atau tambahkan project folder ke Windows Defender exceptions
 ```
 
 ---
 
-## 🏗️ build standalone executable
+## 🏗️ Build Standalone Executable
 
-build output sudah disiapkan untuk windows dan linux.
+Build output sudah disiapkan untuk Windows dan Linux.
 
 ```bash
 # Windows
 python build.py --clean
 # output: dist/ErFlasher-MDM-Tools.exe
-# hanya bundle resource yang dipakai build windows
+# hanya bundle resource yang dipakai build Windows
 
 # Linux
 python build_linux.py --clean
 # output: dist/ErFlasher-MDM-Tools
 ```
 
-### runtime logs
+### Runtime Logs
 
-- app menulis error log ke `erflasher.log`
-- lokasi:
+- App menulis error log ke `erflasher.log`
+- Lokasi:
   - frozen exe: folder yang sama dengan `ErFlasher-MDM-Tools.exe`
   - dev run: project root
 
-kalau app crash / patch fail, kirim `erflasher.log`
+Kalau app crash / patch fail, kirim `erflasher.log`.
 
 ---
 
-## ⚠️ legal disclaimer
+## ⚠️ Legal Disclaimer
 
-this project is intended **strictly for educational, diagnostic, and personal device recovery use only**. it must **only** be used on iOS devices that the user **legally owns** and has the right to modify.
+This project is intended **strictly for educational, diagnostic, and personal device recovery use only**. It must **only** be used on iOS devices that the user **legally owns** and has the right to modify.
 
-ErFlasher MDM Tools **does not jailbreak, exploit, or modify firmware**. it relies entirely on public interfaces (AFC, plist editing, USB restore flows).
+ErFlasher MDM Tools **does not jailbreak, exploit, or modify firmware**. It relies entirely on public interfaces (AFC, plist editing, USB restore flows).
 
-using this software on managed, corporate, or institutional devices **without permission** is prohibited and may be illegal.
+Using this software on managed, corporate, or institutional devices **without permission** is prohibited and may be illegal.
 
 ---
 
-## 🙏 credits
+## 🙏 Credits
 
 - **Erzambayu** — cross-platform port, maintenance, GUI rebuild
 - **fled-dev** — original [MDMPatcher-Enhanced](https://github.com/fled-dev/mdmpatcher-enhanced) (macOS)
@@ -338,20 +343,20 @@ using this software on managed, corporate, or institutional devices **without pe
 
 ---
 
-## 🔧 tech stack
+## 🔧 Tech Stack
 
-| layer | technology |
+| Layer | Technology |
 |---|---|
 | GUI | CustomTkinter (dark theme, native look) |
-| crypto | pycryptodome — RNCryptor v3 AES-256-CBC |
+| Crypto | pycryptodome — RNCryptor v3 AES-256-CBC |
 | USB detection | polling via `idevice_id -l` + pyusb |
-| device comm | libimobiledevice CLI (`ideviceinfo`, `idevicebackup2`) |
-| fallback | pymobiledevice3 (pure Python) |
-| packaging | PyInstaller (single-file executable) |
+| Device comm | libimobiledevice CLI (`ideviceinfo`, `idevicebackup2`) |
+| Fallback | pymobiledevice3 (pure Python) |
+| Packaging | PyInstaller (single-file executable) |
 
 ---
 
-## 📂 project structure
+## 📂 Project Structure
 
 ```
 ErFlasher-MDM-Tools/
@@ -366,9 +371,9 @@ ErFlasher-MDM-Tools/
 │   ├── gui/
 │   │   └── main_window.py           # CustomTkinter GUI
 │   └── resources/
-│       ├── extension1.pdf            # encrypted Info.plist template
-│       ├── extension2.pdf            # encrypted Manifest.plist template
-│       └── libiMobileeDevice.dylib   # encrypted backup archive
+│       ├── extension1.pdf           # encrypted Info.plist template
+│       ├── extension2.pdf           # encrypted Manifest.plist template
+│       └── libiMobileeDevice.dylib  # encrypted backup archive
 ├── requirements.txt
 ├── setup.py
 ├── build.py                         # Windows build script
@@ -378,6 +383,6 @@ ErFlasher-MDM-Tools/
 
 ---
 
-## 📝 license
+## 📝 License
 
 MIT — [github.com/Erzambayu/ErFlasher-MDM-Tools](https://github.com/Erzambayu/ErFlasher-MDM-Tools)
