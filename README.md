@@ -299,11 +299,21 @@ ini bisa terjadi kalo device sempet konek internet **setelah** patch di tahap se
 # Windows
 python build.py --clean
 # output: dist/ErFlasher-MDM-Tools.exe
+# bundles only required resources for Windows build
 
 # Linux
 python build_linux.py --clean
 # output: dist/ErFlasher-MDM-Tools
 ```
+
+### runtime logs
+
+- app writes error log to `erflasher.log`
+- location:
+  - frozen exe: same folder as `ErFlasher-MDM-Tools.exe`
+  - dev run: project root
+
+if app crash / patch fail, send `erflasher.log`
 
 ---
 

@@ -14,6 +14,14 @@ PROJECT_ROOT = Path(__file__).parent
 SRC_DIR = PROJECT_ROOT / "src"
 RESOURCES_DIR = SRC_DIR / "resources"
 
+# explicit resource allowlist for bundle
+# keep only files app really needs
+RESOURCE_BUNDLE = [
+    "extension1.pdf",
+    "extension2.pdf",
+    "libiMobileeDevice.dylib",
+]
+
 
 def clean_build():
     """clean previous builds."""
@@ -41,12 +49,15 @@ def build():
     window_mode = "--windowed" if is_windows else "--console"
     
     # resource files to bundle
+    # explicit allowlist keeps build deterministic and avoids junk files
     resource_files = []
-    if RESOURCES_DIR.exists():
-        for f in RESOURCES_DIR.iterdir():
-            if f.is_file():
-                dest = os.path.join("resources", f.name)
-                resource_files.append(f"{f}{separator}{dest}")
+    for name in RESOURCE_BUNDLE:
+        f = RESOURCES_DIR / name
+        if f.is_file():
+            dest = os.path.join("resources", f.name)
+            resource_files.append(f"{f}{separator}{dest}")
+        else:
+            print(f"[build] skipped missing resource: {f}")
     
     add_data_arg = []
     for rf in resource_files:

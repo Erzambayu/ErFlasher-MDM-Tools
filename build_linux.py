@@ -18,6 +18,13 @@ PROJECT_ROOT = Path(__file__).parent.resolve()
 SRC_DIR = PROJECT_ROOT / "src"
 RESOURCES_DIR = SRC_DIR / "resources"
 
+# explicit resource allowlist for bundle
+RESOURCE_BUNDLE = [
+    "extension1.pdf",
+    "extension2.pdf",
+    "libiMobileeDevice.dylib",
+]
+
 
 def check_dependencies():
     """verify all system dependencies are installed."""
@@ -75,12 +82,14 @@ def build():
     separator = ":"
     add_data_args = []
     
-    if RESOURCES_DIR.exists():
-        for f in sorted(RESOURCES_DIR.iterdir()):
-            if f.is_file():
-                dest = os.path.join("resources", f.name)
-                add_data_args.extend(["--add-data", f"{f}{separator}{dest}"])
-                print(f"[linux] bundling: {f.name} -> {dest}")
+    for name in RESOURCE_BUNDLE:
+        f = RESOURCES_DIR / name
+        if f.is_file():
+            dest = os.path.join("resources", f.name)
+            add_data_args.extend(["--add-data", f"{f}{separator}{dest}"])
+            print(f"[linux] bundling: {f.name} -> {dest}")
+        else:
+            print(f"[linux] skipped missing resource: {f}")
     
     print()
     
