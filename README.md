@@ -295,11 +295,13 @@ ini bisa terjadi kalo device sempet konek internet **setelah** patch di tahap se
 
 ## 🏗️ build standalone executable
 
+build output sudah disiapkan untuk windows dan linux.
+
 ```bash
 # Windows
 python build.py --clean
 # output: dist/ErFlasher-MDM-Tools.exe
-# bundles only required resources for Windows build
+# hanya bundle resource yang dipakai build windows
 
 # Linux
 python build_linux.py --clean
@@ -308,12 +310,12 @@ python build_linux.py --clean
 
 ### runtime logs
 
-- app writes error log to `erflasher.log`
-- location:
-  - frozen exe: same folder as `ErFlasher-MDM-Tools.exe`
+- app menulis error log ke `erflasher.log`
+- lokasi:
+  - frozen exe: folder yang sama dengan `ErFlasher-MDM-Tools.exe`
   - dev run: project root
 
-if app crash / patch fail, send `erflasher.log`
+kalau app crash / patch fail, kirim `erflasher.log`
 
 ---
 
